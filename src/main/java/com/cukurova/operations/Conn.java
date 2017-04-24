@@ -23,7 +23,7 @@ public class Conn {
 
     }
 
-    public final String startConnectionDebugger() {
+    public final String startConnectionDebugger() throws SQLException {
         if (connection == null) {
 
             try {
@@ -34,9 +34,11 @@ public class Conn {
             } catch (ClassNotFoundException c) {
                 return " Error! \nError message: " + c.getMessage();
             }
+            connection.close();
             return "connection succeeded!";
 
         } else {
+            connection.close();
             return "Connection established and database pinged successfully.";
         }
     }
@@ -107,8 +109,9 @@ public class Conn {
             pstmt.setObject(i, variable1);
             i++;
         }
-        return pstmt.executeUpdate();
-
+        int eri = pstmt.executeUpdate();
+        connection.close();
+        return eri;
     }
 
     public void initBatch(String sql) throws SQLException {

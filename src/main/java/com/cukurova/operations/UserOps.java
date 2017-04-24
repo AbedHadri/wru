@@ -6,6 +6,8 @@ public class UserOps extends UserInfo {
     
     public UserInfo getUserInfoByUsername(){
         UserInfo user = new UserInfo();
+        
+        
         return user;
     }
 }
