@@ -20,7 +20,7 @@ public class NotificationTasks extends Notification  {
         Conn conn = new Conn();
         List<Notification> rsltList = new ArrayList<>();
 
-        ResultSet rs = conn.sqlExecuteSelect("SELECT * FROM NOTIFICATIONS WHERE KULL_ID =  ? ORDER BY DATE_CREATED DESC LIMIT ?", useId, limit);
+        ResultSet rs = conn.sqlExecuteSelect("SELECT * FROM notifications WHERE KULL_ID =  ? ORDER BY DATE_CREATED DESC LIMIT ?", useId, limit);
 
         while (rs.next()) {
             this.notificationCount++;
@@ -33,7 +33,7 @@ public class NotificationTasks extends Notification  {
 
     public void setUserNotificationsSeen(String userId) throws SQLException {
         Conn conn = new Conn();
-        conn.sqlExecuteUpdate("UPDATE NOTIFICATIONS SET WAS_SEEN = 1 WHERE KULL_ID = ?", userId);
+        conn.sqlExecuteUpdate("UPDATE notifications SET WAS_SEEN = 1 WHERE KULL_ID = ?", userId);
 
     }
 
@@ -75,7 +75,7 @@ public class NotificationTasks extends Notification  {
     }
 
     public void setAllAsSeen() throws SQLException {
-        new Conn().sqlExecuteUpdate("UPDATE NOTIFICATIONS SET WAS_SEEN = 1 WHERE KULL_ID  = ? AND WAS_SEEN = 0 ", this.userId);
+        new Conn().sqlExecuteUpdate("UPDATE notifications SET WAS_SEEN = 1 WHERE KULL_ID  = ? AND WAS_SEEN = 0 ", this.userId);
     }
 
 }

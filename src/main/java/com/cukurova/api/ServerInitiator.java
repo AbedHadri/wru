@@ -1,6 +1,6 @@
 package com.cukurova.api;
 
-import com.cukurova.utils.AuthunticationFilter;
+import com.cukurova.security.AuthunticationFilter;
 import java.rmi.Naming;
 import org.glassfish.jersey.server.ResourceConfig;
 

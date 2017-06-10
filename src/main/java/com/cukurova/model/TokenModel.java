@@ -1,8 +1,8 @@
 package com.cukurova.model;
 
 import com.cukurova.utils.Conn;
-import com.cukurova.utils.PasswordGenerator;
-import com.cukurova.utils.Secure;
+import com.cukurova.security.PasswordGenerator;
+import com.cukurova.security.Secure;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Date;
@@ -59,12 +59,12 @@ public class TokenModel {
 
     public boolean hasDuplicatedToken(String clientToken) throws SQLException {
         Conn conn = new Conn();
-        return conn.sqlExecuteSelect("SELECT TOKEN FROM TOKENS WHERE TOKEN = ?", clientToken).next();
+        return conn.sqlExecuteSelect("SELECT TOKEN FROM tokens WHERE TOKEN = ?", clientToken).next();
     }
 
     public void pushTokenData() throws SQLException {
         Conn conn = new Conn();
-        conn.sqlExecuteInsert("INSERT INTO TOKENS(TOKEN,USERNAME) VALUES(?,?)", this.clientToken, this.username);
+        conn.sqlExecuteInsert("INSERT INTO tokens(TOKEN,USERNAME) VALUES(?,?)", this.clientToken, this.username);
     }
 
     /**

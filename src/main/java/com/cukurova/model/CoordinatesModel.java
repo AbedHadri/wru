@@ -9,14 +9,37 @@ import java.math.BigDecimal;
  * will represent X-Axis
  */
 public class CoordinatesModel {
-
+    
     private String coordOwner;
+    /**
+     * user issuing the request. used to prevent claiming of data from unauthorized users.
+     */
+    private String requestUser;
+    /**
+     * this is stored as Y_AXIS in the database.
+     */
     private BigDecimal lng;
+    /**
+     * this is stored as X_AXIS in the database.
+     */
     private BigDecimal lat;
+
+    public void setRequestUser(String requestUser) {
+        this.requestUser = requestUser;
+    }
+
+    public String getRequestUser() {
+        return requestUser;
+    }
 
     public CoordinatesModel(String coordinateOwner, BigDecimal lng, BigDecimal lat) {
         this.lng = lng;
         this.lat = lat;
+        this.coordOwner = coordinateOwner;
+    }
+
+    public CoordinatesModel(String coordinateOwner) {
+
         this.coordOwner = coordinateOwner;
     }
 
@@ -34,19 +57,19 @@ public class CoordinatesModel {
         lat = BigDecimal.ZERO;
     }
 
-    public void setLongitude(BigDecimal lng) {
+    public void setLng(BigDecimal lng) {
         this.lng = lng;
     }
 
-    public void setLatitude(BigDecimal lat) {
+    public void setLat(BigDecimal lat) {
         this.lat = lat;
     }
 
-    public BigDecimal getLongitude() {
+    public BigDecimal getLng() {
         return lng;
     }
 
-    public BigDecimal getLatitude() {
+    public BigDecimal getLat() {
         return lat;
     }
 

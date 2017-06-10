@@ -1,22 +1,24 @@
 package com.cukurova.model;
 
 import com.cukurova.utils.Conn;
-import com.cukurova.utils.Secure;
+import com.cukurova.security.Secure;
 import com.cukurova.utils.StringUtils;
+import java.security.Principal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class UserModel {
+public class UserModel implements Principal {
 
     private String username;
     private String firstName;
     private String lastName;
     private String phoneNo;
     private String email;
-
     private String password;
+    private String info;
+    private String status;
 
     public UserModel() {
     }
@@ -24,10 +26,6 @@ public class UserModel {
     public UserModel(String username, String password) {
         this.username = username;
         this.password = password;
-    }
-
-    static public String eee() {
-        return "";
     }
 
     public UserModel(String username, String firstName, String lastName, String phoneNo, String email, String password) {
@@ -44,22 +42,24 @@ public class UserModel {
     public UserModel(String username) {
 
         this.username = username;
-        Conn conn = new Conn();
-        ResultSet rs;
+        this.getDataByUserName(username);
 
-        try {
-            rs = conn.sqlExecuteSelect("SELECT * FROM USER_DATA WHERE USERNAME = ?", username);
+    }
 
-            if (rs.next()) {
-                getUserByResultSet(rs);
-            } else {
-                this.username = null;
-            }
+    public String getInfo() {
+        return info;
+    }
 
-        } catch (SQLException ex) {
-            Logger.getLogger(UserModel.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public String getStatus() {
+        return status;
+    }
 
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void setUsername(String username) {
@@ -115,18 +115,18 @@ public class UserModel {
         this.email = rs.getString("EMAIL");
         this.firstName = rs.getString("FIRST_NAME");
         this.lastName = rs.getString("LAST_NAME");
-        this.password = rs.getString("PASSWORD");
+//        this.password = rs.getString("PASSWORD");
         this.username = rs.getString("USERNAME");
 
     }
 
     public boolean usernameExists() throws Exception {
-        return new Conn().sqlExecuteSelect("SELECT USERNAME FROM USER_INFO WHERE USERNAME = ?  ", this.username).next();
+        return new Conn().sqlExecuteSelect("SELECT USERNAME FROM user_info WHERE USERNAME = ?  ", this.username).next();
     }
 
     public boolean credentialsMatch() throws SQLException, Exception {
 
-        return new Conn().sqlExecuteSelect("SELECT USERNAME FROM USER_INFO WHERE USERNAME = ? AND PASSWORD = ?", this.username, new Secure().hash(this.password, "")).next();
+        return new Conn().sqlExecuteSelect("SELECT USERNAME FROM user_info WHERE USERNAME = ? AND PASSWORD = ?", this.username, new Secure().hash(this.password, "")).next();
     }
 
     public boolean hasConstraintViolationFree() throws Exception {
@@ -141,5 +141,30 @@ public class UserModel {
         } else {
             return true;
         }
+    }
+
+    public UserModel getDataByUserName(String username) {
+
+        ResultSet rs;
+
+        try {
+            rs = new Conn().sqlExecuteSelect("SELECT * FROM user_info WHERE USERNAME = ?", username);
+
+            if (rs.next()) {
+                this.getUserByResultSet(rs);
+                return this;
+            } else {
+                return null;
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(UserModel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return this;
+    }
+
+    @Override
+    public String getName() {
+        return this.username;
     }
 }
