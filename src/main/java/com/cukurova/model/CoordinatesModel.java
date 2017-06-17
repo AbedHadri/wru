@@ -1,6 +1,6 @@
 package com.cukurova.model;
 
-import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Longitude = boylam\n latitude = enlem\n This is the data model for Google
@@ -9,20 +9,40 @@ import java.math.BigDecimal;
  * will represent X-Axis
  */
 public class CoordinatesModel {
-    
+
     private String coordOwner;
     /**
-     * user issuing the request. used to prevent claiming of data from unauthorized users.
+     * user issuing the request. used to prevent claiming of data from
+     * unauthorized users.
      */
     private String requestUser;
     /**
      * this is stored as Y_AXIS in the database.
      */
-    private BigDecimal lng;
+    private double lng;
     /**
      * this is stored as X_AXIS in the database.
      */
-    private BigDecimal lat;
+    private double lat;
+
+    private Date updateDate;
+    private Date createDate;
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
 
     public void setRequestUser(String requestUser) {
         this.requestUser = requestUser;
@@ -32,7 +52,7 @@ public class CoordinatesModel {
         return requestUser;
     }
 
-    public CoordinatesModel(String coordinateOwner, BigDecimal lng, BigDecimal lat) {
+    public CoordinatesModel(String coordinateOwner, double lng, double lat) {
         this.lng = lng;
         this.lat = lat;
         this.coordOwner = coordinateOwner;
@@ -53,23 +73,23 @@ public class CoordinatesModel {
 
     public CoordinatesModel() {
         coordOwner = "";//setting everything to default so we don't get NullPointerException
-        lng = BigDecimal.ZERO;
-        lat = BigDecimal.ZERO;
+        lng = 0;
+        lat = 0;
     }
 
-    public void setLng(BigDecimal lng) {
+    public void setLng(double lng) {
         this.lng = lng;
     }
 
-    public void setLat(BigDecimal lat) {
+    public void setLat(double lat) {
         this.lat = lat;
     }
 
-    public BigDecimal getLng() {
+    public double getLng() {
         return lng;
     }
 
-    public BigDecimal getLat() {
+    public double getLat() {
         return lat;
     }
 

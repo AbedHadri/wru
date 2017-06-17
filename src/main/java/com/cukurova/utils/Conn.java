@@ -43,8 +43,8 @@ public class Conn {
         }
     }
 
-    public final boolean startConnection() {
-        if (connection == null) {
+    public final boolean startConnection() throws SQLException {
+        if (connection == null || connection.isClosed() == true) {
             try {
                 Class.forName(className);
                 connection = DriverManager.getConnection(urlKey, dbusername, dbpassword);
@@ -109,9 +109,8 @@ public class Conn {
             pstmt.setObject(i, variable1);
             i++;
         }
-        int eri = pstmt.executeUpdate();
-        connection.close();
-        return eri;
+        return pstmt.executeUpdate();
+
     }
 
     public void initBatch(String sql) throws SQLException {

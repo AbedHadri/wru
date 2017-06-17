@@ -39,6 +39,7 @@ public class AuthunticationFilter implements ContainerRequestFilter {
         String token = requestContext.getHeaderString("accesstoken");//getting the authorization token from the incoming request
         UserTasks user = new UserTasks();
         UserModel userData = new UserModel();
+         
 
         try {
             userData = user.getUserInfoByToken(token);//check users permission and validity

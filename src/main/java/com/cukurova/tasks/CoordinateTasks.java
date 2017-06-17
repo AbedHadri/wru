@@ -2,9 +2,10 @@ package com.cukurova.tasks;
 
 import com.cukurova.model.CoordinatesModel;
 import com.cukurova.utils.Conn;
-import java.math.BigDecimal;
+import com.cukurova.utils.DateOps;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import javax.ws.rs.core.Response;
 
@@ -14,7 +15,7 @@ public class CoordinateTasks extends CoordinatesModel {
     *call parent 3 parameter constructor, parent here is CoordinatesModel class. 
     *since coordinateTasks(this class) extends CoordinatesModel at least one of the constructors MUST be called in this class's constructors
      */
-    public CoordinateTasks(String coordOwner, BigDecimal lng, BigDecimal lat) {
+    public CoordinateTasks(String coordOwner, double lng, double lat) {
 
         super(coordOwner, lng, lat);
     }
@@ -42,18 +43,40 @@ public class CoordinateTasks extends CoordinatesModel {
 
     }
 
-    public Response pushCoordinatesToDataBaseResponse(String owner, BigDecimal longitude, BigDecimal latitude) throws SQLException {
+    public void updateCoordinates(Date createDate) throws SQLException {
+        //initiate connection to perform database operations (select insert update ..etc)
+        Conn conn = new Conn();
+        //we will insert here this class's elements to the database
+        conn.sqlExecuteUpdate("UPDATE coordinates SET   X_AXIS = ? , Y_AXIS = ? , UPDATE_DATE = NOW()  WHERE USERNAME = ? AND CREATE_DATE = ?",
+                this.getLat(), this.getLng(), this.getCoordOwner(), createDate);
+
+    }
+
+    public Response pushCoordinatesToDataBaseResponse(String owner, double longitude, double latitude) throws SQLException {
         CoordinateTasks cTasks = new CoordinateTasks(owner, longitude, latitude);
-        cTasks.pushCoordinatesToDataBase();
+        CoordinatesModel lastCoord = getContactCoordinates(owner, owner);
+        if (lastCoord.getCreateDate() == null || (lastCoord.getCreateDate() != null && DateOps.periodBetweenDates(lastCoord.getCreateDate(), lastCoord.getUpdateDate(), DateOps.PeriodUnit.HOUR) >= 1)) {
+            cTasks.pushCoordinatesToDataBase();
+        } else {
+            cTasks.updateCoordinates(lastCoord.getCreateDate());
+        }
+
         return Response.ok().build();
     }
 
     public CoordinatesModel getContactCoordinates(String requestUser, String coordOwner) throws SQLException {
         CoordinatesModel coordinates = new CoordinatesModel();
 
-        ResultSet rs = new Conn().sqlExecuteSelect("SELECT * FROM coordinates"
-                + " INNER JOIN relations ON relations.FOLLOWER = ? AND ACCEPTED = 1"
-                + " WHERE USERNAME = ? ORDER BY UPDATE_DATE DESC LIMIT 1", requestUser, coordOwner);
+        ResultSet rs;
+
+        if (requestUser == coordOwner) {
+            rs = new Conn().sqlExecuteSelect("SELECT * FROM coordinates"
+                    + " WHERE USERNAME = ? ORDER BY UPDATE_DATE DESC LIMIT 1", coordOwner);
+        } else {
+            rs = new Conn().sqlExecuteSelect("SELECT * FROM coordinates"
+                    + " INNER JOIN relations ON relations.FOLLOWER = ? AND relations.ACCEPTED = 1"
+                    + " WHERE coordinates.USERNAME = ? ORDER BY coordinates.UPDATE_DATE DESC LIMIT 1", requestUser, coordOwner);
+        }
 
         if (rs.next()) {
             coordinates = extractFromResultSet(rs);
@@ -78,8 +101,10 @@ public class CoordinateTasks extends CoordinatesModel {
     private CoordinateTasks extractFromResultSet(ResultSet rs) throws SQLException {
         CoordinateTasks coord = new CoordinateTasks();
         coord.setCoordOwner(rs.getString("USERNAME"));
-        coord.setLat(rs.getBigDecimal("X_AXIS"));
-        coord.setLng(rs.getBigDecimal("Y_AXIS"));
+        coord.setLat(rs.getDouble("X_AXIS"));
+        coord.setLng(rs.getDouble("Y_AXIS"));
+        coord.setUpdateDate(DateOps.getDateFromTimeStamp(rs.getTimestamp("UPDATE_DATE")));
+        coord.setCreateDate(DateOps.getDateFromTimeStamp(rs.getTimestamp("CREATE_DATE")));
         return coord;
     }
 

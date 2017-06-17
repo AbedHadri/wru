@@ -2,7 +2,6 @@ package com.cukurova.model;
 
 import com.cukurova.utils.Conn;
 import com.cukurova.security.PasswordGenerator;
-import com.cukurova.security.Secure;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Date;
@@ -72,8 +71,7 @@ public class TokenModel {
      * @param username
      * @return
      * @throws SQLException
-     * @throws ParseException 
-     * This methods takes the username and it returns the
+     * @throws ParseException This methods takes the username and it returns the
      * created token.
      */
     public String createAndPushToken(String username) throws SQLException, ParseException {

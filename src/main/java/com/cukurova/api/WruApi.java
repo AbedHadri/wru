@@ -18,6 +18,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -71,6 +72,8 @@ public class WruApi {
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public Response doPushCoordinatesToDataBaseResponse(CoordinatesModel coords) throws Exception {
+
+        System.out.println("coords are " + coords.getLat() + " and " + coords.getLng() + " requesting user : " + getUserName());
         return new CoordinateTasks()
                 .pushCoordinatesToDataBaseResponse(getUserName(), coords.getLng(), coords.getLat());
 
@@ -110,6 +113,15 @@ public class WruApi {
     public Response getFollowedList() throws SQLException {
 
         return Response.ok(new UserTasks().getFullFollowerUserList(getUserName())).build();
+    }
+
+    @GET
+    @Path("contact-location/{username}")
+    @RolesAllowed("USER")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+    public Response getContactLocation(@PathParam("username") String requestedContact) throws SQLException {
+
+        return Response.ok(new CoordinateTasks().getContactCoordinates(getUserName(), requestedContact)).build();
     }
 
 }

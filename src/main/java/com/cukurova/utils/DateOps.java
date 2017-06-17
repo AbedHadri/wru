@@ -104,6 +104,7 @@ public class DateOps {
         Date date = format.parse(string);
         return date;
     }
+
     public static Date toDateTime(String string) throws ParseException {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.GERMAN);
         Date date = format.parse(string);
@@ -117,6 +118,30 @@ public class DateOps {
             return format.format(date);
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public static enum PeriodUnit {
+        HOUR, MINUTE, SECOND
+    }
+
+    public static int periodBetweenDates(Date startDate, Date endDate, PeriodUnit pu) {
+
+        long secs = (endDate.getTime() - startDate.getTime()) / 1000;
+        switch (pu) {
+            case HOUR:
+                int hours = (int) (secs / 3600);
+                return (int) hours;
+            case MINUTE:
+//                secs = secs % 3600;
+                int mins = (int) (secs / 60);
+                return (int) mins;
+            case SECOND:
+//                secs = secs % 60;
+                return (int) secs;
+
+            default:
+                return -1;
         }
     }
 
