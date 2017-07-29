@@ -47,3 +47,4 @@ Temporary Items
 .apdisk
 target/
 nb-configuration.xml
+target/wru.war

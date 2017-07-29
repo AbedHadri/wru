@@ -17,7 +17,7 @@
                 }
                 json = JSON.stringify(json);
                 $.ajax({
-                    url: "/" + $("#url").val(),
+                    url: $("#url").val(),
                     type: method,
                     dataType: "json",
                     contentType: "application/json;charset=utf-8",
